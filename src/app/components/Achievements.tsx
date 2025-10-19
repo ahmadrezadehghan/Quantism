@@ -13,32 +13,30 @@ const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
   e.currentTarget.style.setProperty('--start', (angle + 60).toString());
 };
 
+
 const achievements = [
   {
-    value: 'Global',
-    title: 'Worldwide Access',
-    description:
-      'Launch your trading journey from anywhere—our platform supports traders in over 100 countries with localized languages and currencies.',
+    value: 'Rank 7',
+    title: 'National Medical Exam',
+    description: 'Rank 7 nationwide Iranian medical entrance exam (2018)',
   },
   {
-    value: '24/7',
-    title: 'Round-the-Clock Support',
-    description:
-      'Our multilingual support team is here whenever you need us, ensuring smooth onboarding and uninterrupted trading advice day and night.',
+    value: '15+',
+    title: 'Publications/Abstracts',
+    description: 'Peer-reviewed papers & conference abstracts across oncology, bioinformatics, and systems biology.',
   },
   {
-    value: 'Low',
-    title: 'Competitive Fees',
-    description:
-      'Keep more of your gains: transparent, industry-leading low commission structures mean you pay less and trade more efficiently.',
+    value: 'Yale/Stanford',
+    title: 'Invited Talks & Grants',
+    description: 'DDW 2023 (oral) and DDW 2024 (poster) with travel support; ongoing collaborations with top groups.',
   },
   {
-    value: 'Secure',
-    title: 'Bank-Grade Security',
-    description:
-      'Protecting your assets is our top priority. We employ end-to-end encryption and adhere to top global compliance standards.',
+    value: '2',
+    title: 'Core Team Members',
+    description: 'Seyed Ahmadreza Dehghanian & Seyed Reza Salarikia — building trustworthy data/AI systems.',
   },
 ];
+
 
 
 export default function Achievements() {

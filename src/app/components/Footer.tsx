@@ -1,66 +1,76 @@
 // components/Footer.tsx
+'use client';
 
-'use client'; // This directive marks the file as a client component
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 
-// CurvedLine component definition
-const CurvedLine = () => {
-    // State to track screen width
-    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+// ✅ Stable gradient palette (module-level, not a new array each render)
+const GRADIENT_COLORS = [
+    '#ffffff',
+    'rgba(59,130,246,0.95)',   // blue-500
+    'rgba(99,102,241,0.95)',   // indigo-500
+    'rgba(168,85,247,0.95)',   // purple-500
+] as const;
+
+const CurvedLine: React.FC = () => {
+    // SSR-safe init (no direct window access during hydration)
+    const [screenWidth, setScreenWidth] = useState<number>(0);
 
     useEffect(() => {
-        // Update screen width on resize
-        const handleResize = () => {
-            setScreenWidth(window.innerWidth);
+        const update = () => setScreenWidth(window.innerWidth);
+        update(); // set once on mount
+        let raf = 0;
+        const onResize = () => {
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(update); // smooth + cheap
         };
-
-        // Attach resize event listener
-        window.addEventListener('resize', handleResize);
-
-        // Cleanup the event listener on component unmount
+        window.addEventListener('resize', onResize, { passive: true });
         return () => {
-            window.removeEventListener('resize', handleResize);
+            cancelAnimationFrame(raf);
+            window.removeEventListener('resize', onResize);
         };
     }, []);
 
-    // Define colors for the gradient effect from white to oranges
-    const colors = ['#FFFFFF', 'rgba(0, 180, 255, 0.99)', 'rgba(169, 169, 255, 0.99)', 'rgba(169, 0, 255, 0.99)'];
+    // ✅ precompute paths for performance (deps: only screenWidth)
+    const paths = useMemo(() => {
+        const arr: { d: string; color: string; width: number; opacity: number; blur: number }[] = [];
+        for (let i = 0; i < 50; i++) {
+            const opacity = Math.max(0.05, Math.pow(0.95, i));
+            const yOffset = Math.pow(i, 1.5) * 1;
+            const xSpread = Math.min(100, i * 3);
+            const colorIndex = Math.floor((i / 30) * GRADIENT_COLORS.length);
+            const color = GRADIENT_COLORS[Math.min(colorIndex, GRADIENT_COLORS.length - 1)];
+            const yValue = screenWidth && screenWidth < 1000 ? 150 : 50;
+            arr.push({
+                d: `M-${xSpread},200 Q500,${yValue - yOffset} ${1000 + xSpread},200`,
+                color,
+                width: 7 - i * 0.15,
+                opacity,
+                blur: Math.min(25, i * 0.9),
+            });
+        }
+        return arr;
+    }, [screenWidth]);
 
     return (
-        <div className="w-full h-96 relative overflow-hidden bg-black">
-            <svg className="w-full h-96" viewBox="0 0 1000 220" preserveAspectRatio="none">
-                {/* Multiple curved paths for expanded shadow effect */}
-                {[...Array(50)].map((_, index) => {
-                    // Exponential decrease in opacity for more natural fade
-                    const opacity = Math.max(0.05, Math.pow(0.95, index));
-                    // Increase spread as shadow goes up
-                    const yOffset = Math.pow(index, 1.5) * 1;
-                    // Gradually increase the curve spread
-                    const xSpread = Math.min(100, index * 3);
-                    // Determine color based on position in the sequence
-                    const colorIndex = Math.floor((index / 30) * colors.length);
-                    const color = colors[Math.min(colorIndex, colors.length - 1)];
-
-                    // If the screen width is smaller than 1000, use 150 instead of 50 for the Y offset
-                    const yValue = screenWidth < 1000 ? 150 : 50;
-
-                    return (
-                        <path
-                            key={index}
-                            d={`M-${xSpread},200 Q500,${yValue - yOffset} ${1000 + xSpread},200`}
-                            fill="none"
-                            stroke={color}
-                            strokeWidth={7 - (index * 0.15)}
-                            strokeOpacity={opacity}
-                            style={{
-                                filter: `blur(${Math.min(25, index * 0.9)}px)`
-                            }}
-                        />
-                    );
-                })}
-                {/* Main line on top with strong glow */}
+        <div className="w-full h-64 sm:h-80 md:h-96 relative overflow-hidden bg-black">
+            <svg
+                className="w-full h-full pointer-events-none"
+                viewBox="0 0 1000 220"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+            >
+                {paths.map((p, idx) => (
+                    <path
+                        key={idx}
+                        d={p.d}
+                        fill="none"
+                        stroke={p.color}
+                        strokeWidth={p.width}
+                        strokeOpacity={p.opacity}
+                        style={{ filter: `blur(${p.blur}px)` }}
+                    />
+                ))}
             </svg>
         </div>
     );
@@ -68,29 +78,31 @@ const CurvedLine = () => {
 
 export default function Footer() {
     return (
-        <footer className="py-12 sm:py-16 text-white bg-black">
-            {/* CurvedLine component added above the footer */}
+        <footer className="text-white bg-black">
+            {/* Decorative glow line */}
             <CurvedLine />
 
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p className="text-base sm:text-lg font-medium mb-4">
+            {/* Top helper link */}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 text-center">
+                <p className="text-sm sm:text-base md:text-lg font-medium">
                     Need Help?{' '}
-                    <Link href="/help" className="text-teal-400 hover:underline">
+                    <Link href="/contact" className="text-teal-400 hover:underline">
                         Visit our Help Section
                     </Link>
                 </p>
             </div>
 
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-                {/* Column 1: About */}
+            {/* Columns */}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+                {/* About */}
                 <div>
-                    <Link href="/" className="block text-center text-2xl sm:text-3xl font-bold mb-4">
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-teal-300 to-indigo-400">
-                            FMT Broker
+                    <Link href="/" className="block text-center text-2xl sm:text-3xl font-extrabold mb-4 leading-none">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-300 to-indigo-400">
+                            Quantism
                         </span>
                     </Link>
                     <p className="text-xs sm:text-sm text-gray-400">
-                        FMT delivers top-tier service across 173 countries with innovative trading solutions.
+                        Quantism is a data analysis team building reliable ML systems and research-grade analytics.
                     </p>
                     <ul className="mt-4 space-y-2">
                         <li>
@@ -106,115 +118,143 @@ export default function Footer() {
                     </ul>
                 </div>
 
-                {/* Column 2: Products */}
+                {/* Capabilities */}
                 <div>
-                    <h4 className="text-lg sm:text-xl font-semibold mb-4">Products</h4>
+                    <h4 className="text-lg sm:text-xl font-semibold mb-4">Capabilities</h4>
                     <ul className="space-y-2">
                         <li>
                             <Link href="/trading/forex" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                Forex
+                                ML & AI
                             </Link>
                         </li>
                         <li>
                             <Link href="/trading/indices" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                Indices
+                                Time Series
                             </Link>
                         </li>
                         <li>
-                            <Link href="/trading/cryptocurrencies" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                Crypto CFDs
+                            <Link
+                                href="/trading/cryptocurrencies"
+                                className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition"
+                            >
+                                Bioinformatics
                             </Link>
                         </li>
                     </ul>
                 </div>
 
-                {/* Column 3: Platforms */}
+                {/* Profiles */}
                 <div>
-                    <h4 className="text-lg sm:text-xl font-semibold mb-4">Platforms</h4>
+                    <h4 className="text-lg sm:text-xl font-semibold mb-4">Profiles</h4>
                     <ul className="space-y-2">
                         <li>
-                            <Link href="/platforms/mt4" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                MetaTrader 4
+                            <Link
+                                href="https://linkedin.com/in/ahmad-dehghan-035441185"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition"
+                            >
+                                LinkedIn (Ahmadreza)
                             </Link>
                         </li>
                         <li>
-                            <Link href="/platforms/mt5" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                MetaTrader 5
+                            <Link
+                                href="https://github.com/ahmadrezadehghan"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition"
+                            >
+                                GitHub (Ahmadreza)
                             </Link>
                         </li>
                         <li>
-                            <Link href="/platforms/fmt-trade" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                FMT Trade
+                            <Link
+                                href="https://scholar.google.com/citations?user=zmZiF-UAAAAJ&hl=en"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition"
+                            >
+                                Google Scholar (S. Reza)
                             </Link>
                         </li>
                     </ul>
                 </div>
 
-                {/* Column 4: Education & News */}
+                {/* Publications & Research */}
                 <div>
-                    <h4 className="text-lg sm:text-xl font-semibold mb-4">Education & News</h4>
+                    <h4 className="text-lg sm:text-xl font-semibold mb-4">Publications & Research</h4>
                     <ul className="space-y-2">
                         <li>
-                            <Link href="/blog" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                FMT Blog
+                            <Link href="/publications" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
+                                Publications
                             </Link>
                         </li>
                         <li>
-                            <Link href="/training" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                Training Courses
+                            <Link href="/projects" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
+                                Projects
                             </Link>
                         </li>
                         <li>
-                            <Link href="/tools/forex-news" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                Forex News
+                            <Link href="/open-source" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
+                                ML & AI News
                             </Link>
                         </li>
                         <li>
-                            <Link href="/tools/forex-calendar" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
-                                Economic Calendar
+                            <Link href="/tools" className="text-sm sm:text-base text-gray-400 hover:text-teal-400 transition">
+                                Data Tools
                             </Link>
                         </li>
                     </ul>
                 </div>
 
-                {/* Column 5: Contact & Support */}
+                {/* Contact */}
                 <div>
-                    <h4 className="text-lg sm:text-xl font-semibold mb-4">Contact & Support</h4>
+                    <h4 className="text-lg sm:text-xl font-semibold mb-4">Contact</h4>
                     <ul className="space-y-2 text-gray-400 text-sm sm:text-base">
                         <li>
-                            <a href="tel:+442031515550" className="hover:text-teal-400 transition">
-                                +44 (0) 203 151 5550
+                            <a href="mailto:ahmadrzdeh@gmail.com" className="hover:text-teal-400 transition">
+                                ahmadrzdeh@gmail.com
                             </a>
                         </li>
                         <li>
-                            <Link href="/help/faq" className="hover:text-teal-400 transition">
-                                FAQ & Help
+                            <Link
+                                href="https://ir.linkedin.com/in/seyed-reza-salarikia-md-mph-candidate-998863200"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-teal-400 transition"
+                            >
+                                LinkedIn (S. Reza)
                             </Link>
                         </li>
                         <li>
-                            <Link href="/help/support" className="hover:text-teal-400 transition">
-                                Support Team
+                            <Link
+                                href="https://www.researchgate.net/profile/Reza-Salarikia"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-teal-400 transition"
+                            >
+                                ResearchGate (S. Reza)
                             </Link>
                         </li>
                         <li>
-                            <Link href="mailto:support@fmt.group" className="hover:text-teal-400 transition">
-                                support@fmt.group
-                            </Link>
+                            <a href="mailto:Salarikiareza@gmail.com" className="hover:text-teal-400 transition">
+                                Salarikiareza@gmail.com
+                            </a>
                         </li>
-                        <li className="pt-2 text-xs text-gray-500">
-                            FMT UK Ltd: City of London, EC2V 5BQ, UK.
-                        </li>
+                        <li className="pt-2 text-xs text-gray-500">© Quantism • Global / Remote</li>
                     </ul>
                 </div>
             </div>
 
+            {/* Bottom bar */}
             <div className="border-t border-gray-800 py-6">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-center sm:justify-between items-center text-xs sm:text-sm space-y-2 sm:space-y-0 text-gray-400">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-3 text-xs sm:text-sm text-gray-400">
                     <p>
-                        <strong>Trade responsibly:</strong> Trading CFDs is risky and may lead to permanent capital loss.
+                        <strong>Use data responsibly:</strong> We follow privacy-by-design, governance, and reproducible research
+                        best practices.
                     </p>
                     <p>
-                        <strong>FMT Markets CR SRL</strong> is a subsidiary of FMT Group Ltd.
+                        <strong>Quantism</strong> — All rights reserved.
                     </p>
                 </div>
             </div>

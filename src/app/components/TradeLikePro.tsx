@@ -14,9 +14,9 @@ export default function TradeLikePro() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8 }}
                 >
-                    Trade Like{' '}
+                    Collaborate With{' '}
                     <span className="text-gradient bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-                        A Pro
+                        Quantism
                     </span>
                 </motion.h2>
 
@@ -27,13 +27,12 @@ export default function TradeLikePro() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
                 >
-                    Harness institutional-grade charts, sub-millisecond execution, and advanced analytics on CFDs, Forex,
-                    Metals, Energies, and Shares—all within one sleek platform.
+                    Partner with us on ML research, bioinformatics pipelines, forecasting, and data platform engineering.
                 </motion.p>
 
                 {/* CTA Button */}
                 <motion.a
-                    href="https://direct.FMT.group/en/register/ua/cri/2y6ueacdr"
+                    href="mailto:ahmadrzdeh@gmail.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-black font-semibold text-lg px-10 py-4 rounded-full shadow-2xl transform transition-transform duration-300 hover:-translate-y-1"
@@ -41,7 +40,7 @@ export default function TradeLikePro() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.6 }}
                 >
-                    Get Started Like a Pro
+                    Contact Quantism
                     <motion.svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"

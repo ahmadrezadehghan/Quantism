@@ -1,13 +1,13 @@
 import Image from 'next/image';
 
 const sections = [
-    { title: 'Forex' },
-    { title: 'Metals' },
-    { title: 'Crypto' },
-    { title: 'Indices' },
-    { title: 'Shares' },
-    { title: 'Energy' },
-    { title: 'ETFs' },
+    { title: 'Research' },
+    { title: 'Publications' },
+    { title: 'Open Source' },
+    { title: 'Datasets' },
+    { title: 'Talks' },
+    { title: 'Awards' },
+    { title: 'Advisors' },
 ];
 
 // Hexagon clip-polygon for hover masks

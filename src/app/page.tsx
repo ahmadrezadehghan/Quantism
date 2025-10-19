@@ -3,29 +3,23 @@
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Script from 'next/script';
-
+const ResearchSection = dynamic(() => import('./components/ResearchSection'), { ssr: false });
 const Header = dynamic(() => import('./components/Header'), { ssr: false });
 const Hero = dynamic(() => import('./components/Hero'), { ssr: false });
 const TradeInstruments = dynamic(() => import('./components/TradeInstruments'), { ssr: false });
-const AccountsSection = dynamic(() => import('./components/AccountsSection'), { ssr: false });
-const PlatformsSection = dynamic(() => import('./components/PlatformsSection'), { ssr: false });
-const MobileSection = dynamic(() => import('./components/MobileSection'), { ssr: false });
 const Achievements = dynamic(() => import('./components/Achievements'), { ssr: false });
 const Footer = dynamic(() => import('./components/Footer'), { ssr: false });
-const Flags = dynamic(() => import('./components/Flags'), { ssr: false });
-const PriceTable = dynamic(() => import('./components/Price_tables'), { ssr: false });
-const ForexHeatmap = dynamic(() => import('./components/Currency_pairs'), { ssr: false });
-const InflationMap = dynamic(() => import('./components/Inflation_map'), { ssr: false });
-const EconomicCalendar = dynamic(() => import('./components/Economic_calender'), { ssr: false });
-const ImageSection = dynamic(() => import('./components/ImageSection'), { ssr: false });
 const TradeLikePro = dynamic(() => import('./components/TradeLikePro'), { ssr: false });
+const Biography = dynamic(() => import('./components/Biography'), { ssr: false });
 
+// NEW: Core Expertise section (replaces Flags)
+const CoreExpertiseSection = dynamic(() => import('./components/CoreExpertiseSection'), { ssr: false });
 
 export default function HomePage() {
   return (
     <div className="min-h-screen font-sans text-gray-800 relative bg-black" style={{
       /* desktop: shrink everything to 66% */
-      zoom: '0.66',
+      zoom: '0.9',
       /* for browsers that don’t support zoom */
       transformOrigin: '0 0',
     }}>
@@ -204,7 +198,7 @@ export default function HomePage() {
 
         {/* Mirrored down left Spotlight */}
         <div
-          className="absolute top-[calc(100%+8200px)] left-0"
+          className="absolute top-[calc(100%+800px)] left-0"
           style={{
             height: '60vh',
             width: '20%',
@@ -229,13 +223,9 @@ export default function HomePage() {
           {/* Any other content on top of the lighting */}
         </div>
 
-
-
-
-
         {/* Mirrored center left Spotlight */}
         <div
-          className="absolute top-[calc(100%+4000px)] right-0"
+          className="absolute top-[calc(100%+800px)] right-0"
           style={{
             height: '200vh',
             width: '10%',
@@ -261,7 +251,7 @@ export default function HomePage() {
         </div>
         {/* Mirrored center right Spotlight */}
         <div
-          className="absolute top-[calc(100%+4000px)] left-0"
+          className="absolute top-[calc(100%+3500px)] left-0"
           style={{
             height: '180vh',
             width: '20%',
@@ -286,117 +276,6 @@ export default function HomePage() {
           {/* Any other content on top of the lighting */}
         </div>
 
-
-
-
-
-
-        {/* Mirrored center left Spotlight */}
-        <div
-          className="absolute top-[calc(100%+6500px)] left-0"
-          style={{
-            height: '200vh',
-            width: '10%',
-            filter: 'blur(150px)',
-            transform: 'scale(1.2)',
-          }}
-        >
-          <div
-            className="absolute top-0 left-0 w-full h-full"
-            style={{
-              background: `radial-gradient(
-                ellipse at 50% 50%,
-                rgba(0, 219, 255, 0.2) 5%,
-                rgba(0, 219, 255, 0.3) 55%,
-                rgba(0, 219, 200, 0.3) 15%,
-                rgba(0, 219, 200, 0.2) 80%
-              )`,
-            }}
-          />
-        </div>
-        <div className="relative z-0 space-y-0">
-          {/* Any other content on top of the lighting */}
-        </div>
-        {/* Mirrored center right Spotlight */}
-        <div
-          className="absolute top-[calc(100%+6500px)] right-0"
-          style={{
-            height: '200vh',
-            width: '10%',
-            filter: 'blur(150px)',
-            transform: 'scale(1.2)',
-          }}
-        >
-          <div
-            className="absolute top-0 left-0 w-full h-full"
-            style={{
-              background: `radial-gradient(
-                ellipse at 50% 50%,
-                rgba(148, 88, 255, 0.2) 5%,
-                rgba(148, 88, 255, 0.3) 55%,
-                rgba(148, 88, 255, 0.3) 15%,
-                rgba(148, 88, 255, 0.2) 80%
-              )`,
-            }}
-          />
-        </div>
-        <div className="relative z-0 space-y-0">
-          {/* Any other content on top of the lighting */}
-        </div>
-
-
-        {/* Mirrored right Spotlight */}
-        <div
-          className="absolute top-[calc(100%+8400px)] right-0"
-          style={{
-            height: '60vh',
-            width: '20%',
-            filter: 'blur(150px)',
-            transform: 'scale(1.2)',
-          }}
-        >
-          <div
-            className="absolute top-0 left-0 w-full h-full"
-            style={{
-              background: `radial-gradient(
-                ellipse at 50% 50%,
-                rgba(255, 255, 255, 0.2) 5%,
-                rgba(0, 0, 255, 0.3) 55%,
-                rgba(0, 200, 200, 0.3) 15%,
-                rgba(0, 200, 200, 0.2) 80%
-              )`,
-            }}
-          />
-        </div>
-        <div className="relative z-0 space-y-0">
-          {/* Any other content on top of the lighting */}
-        </div>
-        {/* Mirrored right Spotlight */}
-        <div
-          className="absolute top-[calc(100%+8400px)] right-0"
-          style={{
-            height: '50vh',
-            width: '40%',
-            filter: 'blur(150px)',
-            transform: 'scale(1.2)',
-          }}
-        >
-          <div
-            className="absolute top-0 left-0 w-full h-full"
-            style={{
-              background: `radial-gradient(
-                ellipse at 50% 50%,
-                rgba(255, 255, 255, 0.2) 5%,
-                rgba(0, 0, 255, 0.3) 55%,
-                rgba(0, 200, 200, 0.3) 15%,
-                rgba(0, 200, 200, 0.2) 80%
-              )`,
-            }}
-          />
-        </div>
-        <div className="relative z-0 space-y-0">
-          {/* Any other content on top of the lighting */}
-        </div>
       </div>
 
       {/* Page content */}
@@ -406,38 +285,23 @@ export default function HomePage() {
       </div>
       <Hero style={{ zIndex: '1' }} />
       <TradeInstruments />
-      <AccountsSection />
-      <ImageSection />
 
-      <div className="mt-16">
-        <PlatformsSection />
+
+      <div className="flex flex-col space-y-10 py-15">
+        <Biography />
       </div>
-      <div className="text-center  mt-20 mb-5">
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white">
-          Get FMT Broker App on a Wide Range of Platforms
-        </h2>
-      </div>
-      <div className="w-full flex justify-center ">
-        <MobileSection />
-      </div>
+
+      {/* REPLACED Flags with Core Expertise */}
       <div className="flex flex-col space-y-15 py-12">
-        <Flags />
+        <CoreExpertiseSection />
       </div>
+      {/* REPLACED Flags with Core Expertise */}
+      <div className="flex flex-col space-y-15 py-12">
+        <ResearchSection />
+      </div>
+
       <div className="flex flex-col space-y-15 py-12">
         <Achievements />
-      </div>
-      <div className="flex flex-col space-y-5 py-5">
-        <PriceTable />
-      </div>
-      <div className="flex flex-col space-y-5 py-5">
-        <ForexHeatmap />
-      </div>
-      <div className="flex flex-col space-y-5 py-5">
-        <EconomicCalendar />
-      </div>
-      {/* Grouped widgets with consistent spacing */}
-      <div className="flex flex-col space-y-5 py-5">
-        <InflationMap />
       </div>
 
       {/* Extra breathing room before CTA */}
